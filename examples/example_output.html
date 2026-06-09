@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lecture TA Example Templates</title>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    body { margin: 0; color: #1f2933; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; line-height: 1.68; }
+    .layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 34px; max-width: 1180px; margin: 0 auto; padding: 32px 24px 56px; }
+    .toc { position: sticky; top: 24px; align-self: start; border-right: 1px solid #d9e2ec; padding-right: 18px; font-size: 14px; }
+    .toc a { color: #52606d; text-decoration: none; }
+    main { max-width: 900px; }
+    h1, h2, h3 { color: #102a43; line-height: 1.25; }
+    h2 { border-bottom: 1px solid #d9e2ec; margin-top: 38px; padding-bottom: 8px; }
+    .subtitle, figcaption { color: #5f6b7a; }
+    .knowledge-map, .takeaway, .proof { background: #f8fafc; border: 1px solid #d9e2ec; border-radius: 8px; padding: 16px 18px; }
+    .formula { background: #f3f6f9; border-left: 4px solid #1d4ed8; margin: 18px 0; padding: 14px 16px; }
+    .terms { width: 100%; border-collapse: collapse; margin: 16px 0 22px; }
+    .terms th, .terms td { border: 1px solid #d9e2ec; padding: 8px 10px; text-align: left; vertical-align: top; }
+    .terms th { background: #f8fafc; }
+    img { max-width: 100%; border: 1px solid #d9e2ec; border-radius: 8px; }
+    @media (max-width: 820px) { .layout { display: block; padding: 20px 16px; } .toc { position: static; border: 1px solid #d9e2ec; border-radius: 8px; margin-bottom: 24px; padding: 12px 14px; } }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="课程讲解目录">
+      <strong>目录</strong>
+      <ol>
+        <li><a href="#hardware-template">硬件类课程模板</a></li>
+        <li><a href="#ai-template">AI / 算法类课程模板</a></li>
+        <li><a href="#math-template">数学类课程模板</a></li>
+      </ol>
+    </nav>
+    <main>
+      <header>
+        <h1>Lecture TA Example Templates</h1>
+        <p class="subtitle">这些片段展示不同课程类型的讲解组织方式；真实输出应根据 slides 内容替换。</p>
+      </header>
+
+      <section id="hardware-template">
+        <h2>硬件类课程模板：图文绑定讲解</h2>
+        <p>硬件类课程的核心不是把 slide 内容逐页复述，而是把 structure、signal flow 和 timing behavior 讲清楚。关键图片应放在对应主题下面，图后立即解释组成件、接口和信号方向。</p>
+
+        <section class="knowledge-map">
+          <h3>知识地图</h3>
+          <p><strong>Memory map</strong> 决定 CPU 能访问哪些 peripheral registers；<strong>bit mask operations</strong> 决定如何修改寄存器中的单个字段；这些配置最终影响 <strong>GPIO / timer / interrupt</strong> 的硬件行为。</p>
+          <p>关系链：Register address -> Bit fields -> Peripheral configuration -> External hardware behavior。</p>
+        </section>
+
+        <h3>核心概念速查</h3>
+        <table class="terms">
+          <thead><tr><th>概念 / Term</th><th>解释</th></tr></thead>
+          <tbody>
+            <tr><td><strong>GPIO</strong></td><td>General-Purpose Input/Output，连接外部 pins 的通用输入输出端口。</td></tr>
+            <tr><td><strong>Control register</strong></td><td>用于配置 peripheral 行为的 register，例如方向、模式、使能位。</td></tr>
+            <tr><td><strong>Interrupt flag</strong></td><td>硬件事件发生后置位的状态位，software 需要读取并清除。</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Memory-Mapped I/O（内存映射输入输出）</h3>
+        <p>理解这部分时，应该先看图中的 CPU、bus、address decoder 和 peripheral register。CPU 发出 address 和 read/write control signals，address decoder 判断目标是否属于某个 peripheral，然后对应 register 被读取或写入。</p>
+        <figure>
+          <img src="assets/page_004.png" alt="Memory-mapped I/O block diagram">
+          <figcaption>示例图：Memory-mapped I/O 结构图。真实输出中应使用从 slides 中提取的对应页或裁剪图。</figcaption>
+        </figure>
+        <p>这张图的关键不是“有几个方框”，而是 data path 和 control path 如何分工：data bus 传递 register value，control signals 决定这次访问是 read 还是 write。对于嵌入式程序来说，一行 C code 可能最终变成一次 bus transaction。</p>
+
+        <div class="formula">\[
+\text{masked\_value} = \text{register\_value} \,\&\, \text{mask}
+\]</div>
+        <p>这里 \(\text{register\_value}\) 是当前 register 内容，\(\text{mask}\) 选择要观察的 bit field。这个公式常用于检查 hardware flag 是否置位。</p>
+      </section>
+
+      <section id="ai-template">
+        <h2>AI / 算法类课程模板：方法主线 + 理论证明分离</h2>
+        <p>AI、reinforcement learning 和算法课程通常需要先讲清楚 problem setting，再讲 objective、algorithm procedure 和理论依据。长证明不应打断主线，可以单独放在“理论证明 / 推导”部分。</p>
+
+        <section class="knowledge-map">
+          <h3>知识地图</h3>
+          <p><strong>MDP</strong> 给出 state、action、reward 和 transition；<strong>value function</strong> 衡量长期收益；<strong>Bellman equation</strong> 把当前决策和未来收益连接起来；最后得到 <strong>policy improvement</strong> 或 learning update。</p>
+        </section>
+
+        <h3>核心概念速查</h3>
+        <table class="terms">
+          <thead><tr><th>概念 / Term</th><th>解释</th></tr></thead>
+          <tbody>
+            <tr><td><strong>State</strong></td><td>智能体观察到的环境状态，记为 <code>s</code>。</td></tr>
+            <tr><td><strong>Policy</strong></td><td>从 state 到 action 的决策规则，常写作 <code>π(a|s)</code>。</td></tr>
+            <tr><td><strong>Value function</strong></td><td>从某个 state 或 state-action pair 出发的 expected return。</td></tr>
+          </tbody>
+        </table>
+
+        <h3>方法主线</h3>
+        <p>以 policy evaluation 为例，目标不是直接找最优 action，而是在给定 policy <code>π</code> 时估计每个 state 的长期价值。直觉上，一个 state 的价值等于 immediate reward 加上下一步 state 的 discounted value。</p>
+        <div class="formula">\[
+V^\pi(s)=\mathbb{E}_\pi\left[R_{t+1}+\gamma V^\pi(S_{t+1})\mid S_t=s\right]
+\]</div>
+        <p>其中 \(\gamma\) 是 discount factor，用来控制未来 reward 的权重；当 \(\gamma\) 越接近 1，模型越重视长期收益。</p>
+
+        <div class="proof">
+          <h3>理论证明 / 推导：Bellman expectation equation</h3>
+          <p>推导时先把 return 写成递归形式：当前 reward 加上折扣后的未来 return。再对 policy 和 transition probability 取 expectation，就得到 Bellman expectation equation。这个推导适合单独放在证明区，因为它支撑方法正确性，但不应该打断算法主线。</p>
+        </div>
+      </section>
+
+      <section id="math-template">
+        <h2>数学类课程模板：定义、定理、证明与例子</h2>
+        <p>数学课程应优先转写并解释 definitions、theorems、proof ideas 和 examples。除非 slides 中的图是几何直觉或 visual proof 的关键，否则不需要放大量截图。</p>
+
+        <section class="knowledge-map">
+          <h3>知识地图</h3>
+          <p><strong>Vector space</strong> 提供对象集合；<strong>linear independence</strong> 描述向量之间是否冗余；<strong>basis</strong> 是无冗余且能张成空间的向量组；<strong>dimension</strong> 则由 basis 中向量个数定义。</p>
+        </section>
+
+        <h3>核心概念速查</h3>
+        <table class="terms">
+          <thead><tr><th>概念 / Term</th><th>解释</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Linear independence</strong></td><td>如果只有所有系数都为 0 才能线性组合得到 zero vector，则向量组线性无关。</td></tr>
+            <tr><td><strong>Span</strong></td><td>一个向量组所有 linear combinations 构成的集合。</td></tr>
+            <tr><td><strong>Basis</strong></td><td>既 linearly independent 又 span 整个 space 的向量组。</td></tr>
+          </tbody>
+        </table>
+
+        <h3>定理讲解</h3>
+        <p><strong>Theorem:</strong> 在有限维 vector space \(V\) 中，任意两个 basis 的元素个数相同。这个结论使得 dimension \(\dim(V)\) 的定义是良定的，因为它不依赖于你选择哪一组 basis。</p>
+        <p><strong>条件：</strong>空间必须是 finite-dimensional，并且讨论的是同一个 vector space 的 basis。<strong>结论：</strong>所有 basis 的 cardinality 相同。<strong>意义：</strong>dimension 可以作为空间本身的属性。</p>
+
+        <div class="proof">
+          <h3>证明思路</h3>
+          <p>证明通常依赖 replacement theorem。直觉是：如果一组 basis 比另一组长，那么较长那组中必然存在冗余向量，这会和 linear independence 矛盾。因此两个 basis 的长度必须相同。</p>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

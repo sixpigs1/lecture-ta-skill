@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1f2933;
+      --muted: #5f6b7a;
+      --border: #d9e2ec;
+      --panel: #f8fafc;
+      --accent: #1d4ed8;
+      --accent-soft: #e8f1ff;
+      --code-bg: #f3f6f9;
+      --max-width: 980px;
+      --toc-width: 260px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.68;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: var(--toc-width) minmax(0, 1fr);
+      gap: 36px;
+      max-width: calc(var(--max-width) + var(--toc-width) + 72px);
+      margin: 0 auto;
+      padding: 32px 28px 64px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      border-right: 1px solid var(--border);
+      padding-right: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .toc-title {
+      margin: 0 0 12px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .toc ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .toc li {
+      margin: 7px 0;
+    }
+
+    .toc a {
+      display: block;
+      border-radius: 6px;
+      padding: 4px 6px;
+      color: var(--muted);
+    }
+
+    .toc a:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    main {
+      width: 100%;
+      max-width: var(--max-width);
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+      padding-bottom: 22px;
+    }
+
+    h1, h2, h3 {
+      color: #102a43;
+      line-height: 1.25;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 2.35rem;
+    }
+
+    h2 {
+      border-bottom: 1px solid var(--border);
+      margin: 42px 0 16px;
+      padding-bottom: 8px;
+      font-size: 1.55rem;
+    }
+
+    h3 {
+      margin: 28px 0 10px;
+      font-size: 1.18rem;
+    }
+
+    p {
+      margin: 0 0 16px;
+    }
+
+    ul, ol {
+      padding-left: 1.35rem;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
+
+    .section {
+      scroll-margin-top: 24px;
+    }
+
+    .knowledge-map,
+    .takeaway,
+    .proof {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+    }
+
+    .formula {
+      overflow-x: auto;
+      background: var(--panel);
+      border-left: 4px solid var(--accent);
+      margin: 20px 0;
+      padding: 14px 18px;
+      white-space: normal;
+    }
+
+    pre {
+      overflow-x: auto;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.12em 0.32em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.93em;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+    }
+
+    figure {
+      margin: 26px 0;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .terms {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0 24px;
+      font-size: 0.96rem;
+    }
+
+    .terms th,
+    .terms td {
+      border: 1px solid var(--border);
+      padding: 9px 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .terms th {
+      background: var(--panel);
+      color: #102a43;
+    }
+
+    .proof {
+      margin: 20px 0;
+    }
+
+    .proof h3 {
+      margin-top: 0;
+    }
+
+    @media (max-width: 880px) {
+      body {
+        font-size: 16px;
+      }
+
+      .layout {
+        display: block;
+        padding: 20px 18px 48px;
+      }
+
+      .toc {
+        position: static;
+        max-height: none;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 28px;
+        padding: 14px 16px;
+      }
+
+      h1 {
+        font-size: 1.9rem;
+      }
+
+      h2 {
+        font-size: 1.35rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="课程讲解目录">
+      <p class="toc-title">目录</p>
+      <ol>
+        {{ toc }}
+      </ol>
+    </nav>
+    <main>
+      <header>
+        <h1>{{ title }}</h1>
+        <p class="subtitle">{{ subtitle }}</p>
+      </header>
+      {{ content }}
+    </main>
+  </div>
+</body>
+</html>
