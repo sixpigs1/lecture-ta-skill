@@ -189,7 +189,7 @@ Emphasize concepts, definitions, theorems, proof ideas, and examples:
 2. Determine the lecture title, domain type, and main conceptual goal.
 3. Extract useful visual assets:
    - Prefer the skill-local venv Python to run `scripts/extract_pdf_assets.py`.
-   - On this machine, use `C:\Users\叶泽玮\.codex\skills\lecture-ta\.venv\Scripts\python.exe`.
+   - On Windows, the expected path is `%USERPROFILE%\.codex\skills\lecture-ta\.venv\Scripts\python.exe` after setup.
    - If only a region of a page is important, crop or screenshot that region when tools permit.
    - Keep images that support explanation; do not render every slide into the note unless the user asks.
 4. Read the slide content and infer:
@@ -226,7 +226,7 @@ Emphasize concepts, definitions, theorems, proof ideas, and examples:
 - `scripts/extract_pdf_assets.py`: render PDF pages to PNG images with PyMuPDF (`fitz`) when available.
 - `scripts/build_html.py`: reusable HTML builder for creating `index.html` from structured sections, images, formulas, proofs, concept glossaries, and prose.
 - `examples/example_output.html`: examples for hardware, AI/algorithm, and mathematics lecture-note styles.
-- `.venv/`: skill-local Python virtual environment for running bundled scripts reliably on this machine.
+- `.venv/`: optional local Python virtual environment for running bundled scripts reliably. Do not commit this directory; recreate it from `requirements.txt`.
 
 ## Practical Notes
 
@@ -239,7 +239,7 @@ Use relative paths from `index.html` to assets. For example, if the generated no
 Use the skill-local Python environment when running the bundled tools:
 
 ```powershell
-& "C:\Users\叶泽玮\.codex\skills\lecture-ta\.venv\Scripts\python.exe" "C:\Users\叶泽玮\.codex\skills\lecture-ta\scripts\extract_pdf_assets.py" ".\slides\lecture03.pdf" --lecture-name lecture03 --output-root ".\outputs"
+& "$env:USERPROFILE\.codex\skills\lecture-ta\.venv\Scripts\python.exe" "$env:USERPROFILE\.codex\skills\lecture-ta\scripts\extract_pdf_assets.py" ".\slides\lecture03.pdf" --lecture-name lecture03 --output-root ".\outputs"
 ```
 
 The skill-local venv currently uses Python 3.12 and includes:
@@ -250,8 +250,10 @@ The skill-local venv currently uses Python 3.12 and includes:
 If the venv is missing or broken, recreate it with:
 
 ```powershell
-& "C:\Users\叶泽玮\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe" -m venv "C:\Users\叶泽玮\.codex\skills\lecture-ta\.venv"
-& "C:\Users\叶泽玮\.codex\skills\lecture-ta\.venv\Scripts\python.exe" -m pip install --upgrade pip pymupdf
+cd "$env:USERPROFILE\.codex\skills\lecture-ta"
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
 If package download fails because of networking, retry with the user's local proxy:
@@ -259,7 +261,7 @@ If package download fails because of networking, retry with the user's local pro
 ```powershell
 $env:HTTP_PROXY="http://127.0.0.1:7890"
 $env:HTTPS_PROXY="http://127.0.0.1:7890"
-& "C:\Users\叶泽玮\.codex\skills\lecture-ta\.venv\Scripts\python.exe" -m pip install --upgrade pip pymupdf
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
 When PyMuPDF is unavailable, tell the user that asset rendering needs the skill-local venv to be repaired, then proceed with text-only HTML if enough slide text is available.
